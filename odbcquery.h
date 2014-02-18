@@ -36,7 +36,7 @@ public:
     bool exec();
 
     /**
-    *
+    *   Get the location of the statement of the query.
     */
     SQLHSTMT* getStatement(){return &_stmnt;}
 

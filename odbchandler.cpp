@@ -1,7 +1,6 @@
 #include "odbchandler.h"
-#include "stdio.h"
-#include<iostream>
-#include "tglobal.h"
+#include <cstdio>
+#include<cstring>
 
 ODBCHandler* ODBCHandler::m_instance = 0;
 static int connected = 0;
@@ -146,15 +145,15 @@ bool ODBCHandler::connect(const char *dsn)
                 outstr, sizeof(outstr), &outstrlen,
                 SQL_DRIVER_COMPLETE);
      if (SQL_SUCCEEDED(ret)) {
-       tDebug("Connected\n");
-       tDebug("Returned connection string was:\n\t%s\n", outstr);
+       fprintf(stderr, "Connected\n");
+      fprintf(stderr, "Returned connection string was:\n\t%s\n", outstr);
        if (ret == SQL_SUCCESS_WITH_INFO) {
-         tDebug("Driver reported the following diagnostics\n");
+         fprintf(stderr, "Driver reported the following diagnostics\n");
          extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
        }
        SQLDisconnect(dbc);		/* disconnect from driver */
      } else {
-       tDebug( "Failed to connect\n");
+       fprintf(stderr,  "Failed to connect\n");
        extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
      }
      /* free up allocated handles */
@@ -209,8 +208,8 @@ void ODBCHandler::listDataSources()
                          dsn, sizeof(dsn), &dsn_ret,
                          desc, sizeof(desc), &desc_ret))) {
       direction = SQL_FETCH_NEXT;
-      tDebug("%s - %s\n", dsn, desc);
-      if (ret == SQL_SUCCESS_WITH_INFO) tDebug("\tdata truncation\n");
+      fprintf(stderr, "%s - %s\n", dsn, desc);
+      if (ret == SQL_SUCCESS_WITH_INFO) fprintf(stderr, "\tdata truncation\n");
     }
 }
 
@@ -233,8 +232,8 @@ void ODBCHandler::listDrivers()
                           driver, sizeof(driver), &driver_ret,
                           attr, sizeof(attr), &attr_ret))) {
        direction = SQL_FETCH_NEXT;
-       tDebug("%s - %s\n", driver, attr);
-       if (ret == SQL_SUCCESS_WITH_INFO) tDebug("\tdata truncation\n");
+       fprintf(stderr, "%s - %s\n", driver, attr);
+       if (ret == SQL_SUCCESS_WITH_INFO) fprintf(stderr, "\tdata truncation\n");
      }
 }
 
@@ -283,13 +282,13 @@ void ODBCHandler::showTables(const char *dsn)
       }
 }
 
+
 void ODBCHandler::describeParameter(const char* sqlProc,int parameterIndex)
 {
     SQLHSTMT stmt;
     SQLRETURN ret;
     SQLRETURN ret2;
     SQLSMALLINT columns; /* number of columns in result-set */
-    QVariantMap rMap;
     int row = 0;
 
     if (ODBC_env != SQL_NULL_HANDLE || connected != 0)
@@ -352,6 +351,7 @@ void ODBCHandler::describeParameter(const char* sqlProc,int parameterIndex)
         //free(LenOrIndArray);
     }
 }
+
 
 bool ODBCHandler::allocHandle(SQLHSTMT *stmt)
 {
@@ -440,6 +440,8 @@ bool ODBCHandler::odbc_exec_stmt(SQLHSTMT *stmt, const char *sql)
     return true;
 }
 
+#ifdef QT_VERSION
+
 QVariantMap ODBCHandler::ExecuteQuery(const char *sql, int *ok)
 {
 
@@ -488,6 +490,7 @@ void ODBCHandler::ExecuteQuery(const char *sql, QVariantList &list, int *ok)
         }
     }
 }
+#endif
 
 void ODBCHandler::testQuery(const char *query)
 {

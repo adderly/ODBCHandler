@@ -4,9 +4,9 @@
 #include"sql.h"
 #include"sqlext.h"
 
-//#ifdef QT_VERSION
+#ifdef QT_VERSION
 #include<QVariant>
-//#endif
+#endif
 
 
 /**
@@ -74,6 +74,7 @@ class ODBCHandler
 
     /**
     *   Describe parameter of a store procedure.
+    	TODO:
     */
     void describeParameter(const char* sqlProc,int parameterIndex);
 
@@ -115,7 +116,7 @@ class ODBCHandler
     */
     bool odbc_exec_stmt(SQLHSTMT *stmt,const char *sql);
 
-//#ifdef  QT_VERSION
+#ifdef  QT_VERSION
     /**
     *   Returns A map containing al the result.
     */
@@ -125,7 +126,7 @@ class ODBCHandler
     *
     */
     void ExecuteQuery(const char *sql, QVariantList& list,int *ok);
-//#endif
+#endif
 
     /**
     *   Testing purposes:
